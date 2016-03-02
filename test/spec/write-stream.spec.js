@@ -69,6 +69,19 @@ describe('#createWriteStream', function() {
 				contents: through2.obj()
 			}));
 		});
+
+		it('should catch thrown errors from upload', function (done) {
+			this.s3.upload.throws('S3 connection error');
+			this.stream.once('error', function (err) {
+				expect(err.toString()).to.equal('S3 connection error');
+				done();
+			});
+			this.stream.end(new File({
+				path: 'foo/test',
+				base: 'foo',
+				contents: this.source
+			}));
+		});
 	});
 
 	describe('buffering', function() {
